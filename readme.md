@@ -1,0 +1,1 @@
+Here I'll describe the methods of work with RtSphinxBehavior
