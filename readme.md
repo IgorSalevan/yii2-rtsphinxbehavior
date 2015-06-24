@@ -1,4 +1,4 @@
-# Behavior for working with Sphinx RealTime index
+# Yii2 Behavior for working with Sphinx RealTime index
 
 ### How to attach
 
