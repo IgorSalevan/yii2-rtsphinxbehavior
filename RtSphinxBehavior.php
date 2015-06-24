@@ -1,26 +1,40 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: igor
- * Date: 16.06.2015
- * Time: 9:39
- */
 namespace modules\blog\components;
 
 use yii\db\ActiveRecord;
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
 
+/**
+ * Class RtSphinxBehavior
+ * @package modules\blog\components
+ *  Helpful behavior for handling synchronization with Sphinx realTime index
+ */
 class RtSphinxBehavior extends Behavior {
 
+    /**
+     * @var string provide the name of realtime index from you sphinx.conf file
+     */
     public $rtIndex = null;
 
+    /**
+     * @var integer the name of document ID from main document fetch query (sphinx.conf)
+     */
     public $idAttributeName = null;
 
+    /**
+     * @var array the set of rt_field names (sphinx.conf)
+     */
     public $rtFieldNames = [];
 
+    /**
+     * @var array the set of rt attributes
+     */
     public $rtAttributeNames = [];
 
+    /**
+     * @var bool turning on | off the behavior
+     */
     public $enabled = false;
 
     public function init() {
@@ -40,7 +54,6 @@ class RtSphinxBehavior extends Behavior {
         }
     }
 
-
     public function events() {
         return [
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
@@ -50,14 +63,18 @@ class RtSphinxBehavior extends Behavior {
     }
 
     public function afterInsert() {
-        return $this->replace();
+        return $this->enabled && $this->replace();
     }
 
     public function afterUpdate() {
-        return $this->replace();
+        return $this->enabled && $this->replace();
     }
 
     public function afterDelete() {
+        if (!$this->enabled) {
+            return false;
+        }
+
         $params = [];
         $sql = \Yii::$app->sphinx->getQueryBuilder()
             ->delete(
@@ -65,9 +82,8 @@ class RtSphinxBehavior extends Behavior {
                 $this->idAttributeName.'='.$this->owner->getAttribute($this->idAttributeName),
                 $params
             );
-        $result = \Yii::$app->sphinx->createCommand($sql, $params)->execute();
 
-        return false;
+        return \Yii::$app->sphinx->createCommand($sql, $params)->execute();
     }
 
     protected function getColumns() {
@@ -97,8 +113,6 @@ class RtSphinxBehavior extends Behavior {
                 $this->getColumns(),
                 $params
             );
-        $result = \Yii::$app->sphinx->createCommand($sql, $params)->execute();
-
-        return false;
+        return \Yii::$app->sphinx->createCommand($sql, $params)->execute();
     }
 }
