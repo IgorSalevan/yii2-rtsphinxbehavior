@@ -1,4 +1,4 @@
-# Behavior for working with Sphinx RealTime indexes
+# Behavior for working with Sphinx RealTime index
 
 ### How to attach
 
@@ -55,7 +55,7 @@ source is_src
 }
 ```
 
-The rt block looks like this:
+The configuration block for `RT` index looks like this:
 
 ```
 index is_rt
@@ -90,5 +90,5 @@ index is_rt
 
 ### Resume
 
-In mentioned above example I placed `RtSphinxBehavior.php` in the directory `modules/blog/components`, so this structure 
-describes the situation when we use behavior only for one module, named `blog`.  
+In the mentioned above example the `RtSphinxBehavior.php` was placed under `modules\blog\components` namespace.
+Such structure describes the situation when the behavior is used only for one module. Here it is the `blogModule`.  
